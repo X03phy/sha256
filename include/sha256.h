@@ -1,10 +1,14 @@
 #ifndef SHA256_h
 #define SHA256_h
 
+/* For uintXX_t */
 #include <stdint.h>
-#include <string.h>
+
+/* For size_t */
 #include <stddef.h>
-#include <stdio.h>
+
+/* For strlen(), strcmp() */
+#include <string.h>
 
 #define ROTR( x,n )   ( ( x >> n ) | ( x << ( 32 - n ) ) )
 #define SHR( x,n )    ( x >> n )
@@ -14,7 +18,6 @@
 #define EP1( x )      ( ROTR( x,6 ) ^ ROTR( x,11 ) ^ ROTR( x,25 ) )
 #define SIG0( x )     ( ROTR( x,7 ) ^ ROTR( x,18 ) ^ SHR( x,3 ) )
 #define SIG1( x )     ( ROTR( x,17 ) ^ ROTR( x,19 ) ^ SHR( x,10 ) )
-
 
 static const uint32_t K[64] = {
 	0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,

@@ -1,35 +1,42 @@
-CC=gcc
-CFLAGS=-MMD -Werror -Wall -Wextra -pedantic
+NAME=SHA256
 
-SRC=$(wildcard src/*.c)
-OBJ=$(SRC:%.c=%.o)
+CC=gcc
+CFLAGS=-Werror -Wall -Wextra -g -MMD
+
+SRC_DIR=src
+BUILD=.build
+INCLUDE=-Iinclude
+
+SRC=$(wildcard $(SRC_DIR)/*.c)
+OBJ=$(patsubst $(SRC_DIR)/%.c, $(BUILD)/%.o, $(SRC))
 DEP=$(OBJ:%.o=%.d)
 
-EXE=SHA256
-LIBS=$(addprefix -l,)
+LIBS=$(addprefix -l, crypto)
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+all: create_dir $(NAME)
 
-$(EXE): $(OBJ)
-	$(CC) -o $@ $^ $(LIBS)
+create_dir: | $(BUILD)
 
-debug: CFLAGS += -g
-debug: $(EXE)
+$(BUILD):
+	@mkdir -p $(BUILD)
 
-release: CFLAGS += -O3 -DNDEBUG
-release: $(EXE)
-.NOTPARALLEL: release
+$(NAME): $(OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
-all: $(EXE)
+$(BUILD)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 clean:
-	rm -rf $(OBJ) $(DEP)
+	@if [ -d $(BUILD) ]; then $(RM) -rf $(BUILD) && printf "\033[1;31m\tDeleted: $(NAME) $(BUILD)\033[0m\n"; fi
 
-fclean: clean
-	rm -f $(EXE)
+fclean:
+	@make --no-print-directory clean
+	@if [ -f $(NAME) ]; then $(RM) -rf $(NAME) && printf "\033[1;31m\tDeleted: $(NAME)\033[0m\n"; fi
 
-re: fclean all
-.NOTPARALLEL: re
+re:
+	@make --no-print-directory fclean
+	@make --no-print-directory all
 
-.PHONY=debug release all clean fclean re
+-include $(DEP)
+
+.PHONY=all clean fclean re create_dir

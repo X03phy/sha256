@@ -1,4 +1,4 @@
-#include "../include/sha256.h"
+#include "sha256.h"
 
 static void sha256_init( t_sha256_ctx *ctx )
 {
@@ -15,23 +15,22 @@ static void sha256_init( t_sha256_ctx *ctx )
 	ctx->buffer_len = 0;
 }
 
-static void sha256_transform( t_sha256_ctx *ctx, const uint8_t data[64] )
+static void sha256_transform( t_sha256_ctx *ctx )
 {
 	uint32_t W[64];
 	uint32_t a, b, c, d, e, f, g, h;
 	uint32_t t1, t2;
-	uint8_t i = 0;
+	uint8_t i;
 
-	for ( ; i < 16; ++i )
-		W[i] = ( data[i * 4] << 24 ) | ( data[i * 4 + 1] << 16 ) |
-			   ( data[i * 4 + 2] << 8 ) | ( data[i * 4 + 3] );
+	for ( i = 0; i < 16; ++i )
+		W[i] = ( ctx->buffer[i * 4] << 24 ) | ( ctx->buffer[i * 4 + 1] << 16 ) |
+			   ( ctx->buffer[i * 4 + 2] << 8 ) | ( ctx->buffer[i * 4 + 3] );
 
 	for ( ; i < 64; ++i )
 		W[i] = SIG1( W[i - 2] ) + W[i - 7] + SIG0( W[i - 15] ) + W[i - 16];
 
 	a = ctx->state[0]; b = ctx->state[1]; c = ctx->state[2]; d = ctx->state[3];
 	e = ctx->state[4]; f = ctx->state[5]; g = ctx->state[6]; h = ctx->state[7];
-	printf("ntm:%u\n", a);
 
 	for ( i = 0; i < 64; ++i )
 	{
@@ -45,10 +44,6 @@ static void sha256_transform( t_sha256_ctx *ctx, const uint8_t data[64] )
 		c = b;
 		b = a;
 		a = t1 + t2;
-		// printf("------------ %d ------------\n", i);
-		// printf("a:%u\n", a);
-		// printf("h:%u\n", h);
-		// printf("f:%u\n", f);
 	}
 
 	ctx->state[0] += a;
@@ -61,7 +56,7 @@ static void sha256_transform( t_sha256_ctx *ctx, const uint8_t data[64] )
 	ctx->state[7] += h;
 }
 
-static void sha256_update( t_sha256_ctx *ctx, const uint8_t *data, size_t len )
+static void sha256_update( t_sha256_ctx *ctx, const uint8_t *data, const size_t len )
 {
 	for ( size_t i = 0; i < len; ++i )
 	{
@@ -70,13 +65,13 @@ static void sha256_update( t_sha256_ctx *ctx, const uint8_t *data, size_t len )
 
 		if ( ctx->buffer_len == 64 )
 		{
-			sha256_transform( ctx, ctx->buffer );
+			sha256_transform( ctx );
 			ctx->buffer_len = 0;
 		}
 	}
 }
 
-static void sha256_final( t_sha256_ctx *ctx, uint8_t hash[32] )
+static void sha256_final( uint8_t hash[32], t_sha256_ctx *ctx )
 {
 	ctx->buffer[ctx->buffer_len++] = 0x80;
 
@@ -84,16 +79,22 @@ static void sha256_final( t_sha256_ctx *ctx, uint8_t hash[32] )
 	{
 		while ( ctx->buffer_len < 64 )
 			ctx->buffer[ctx->buffer_len++] = 0x00;
-		sha256_transform( ctx, ctx->buffer );
+		sha256_transform( ctx );
 		ctx->buffer_len = 0;
 	}
 
 	while ( ctx->buffer_len < 56 )
 		ctx->buffer[ctx->buffer_len++] = 0x00;
 
-	uint64_t bitlen_be = __builtin_bswap64( ctx->bitlen );
-	memcpy(ctx->buffer + 56, &bitlen_be, 8);
-	sha256_transform( ctx, ctx->buffer );
+	ctx->buffer[ctx->buffer_len++] = ( ctx->bitlen >> 56 ) & 0xff;
+	ctx->buffer[ctx->buffer_len++] = ( ctx->bitlen >> 48 ) & 0xff;
+	ctx->buffer[ctx->buffer_len++] = ( ctx->bitlen >> 40 ) & 0xff;
+	ctx->buffer[ctx->buffer_len++] = ( ctx->bitlen >> 32 ) & 0xff;
+	ctx->buffer[ctx->buffer_len++] = ( ctx->bitlen >> 24 ) & 0xff;
+	ctx->buffer[ctx->buffer_len++] = ( ctx->bitlen >> 16 ) & 0xff;
+	ctx->buffer[ctx->buffer_len++] = ( ctx->bitlen >> 8 ) & 0xff;
+	ctx->buffer[ctx->buffer_len++] = ctx->bitlen & 0xff;
+	sha256_transform( ctx );
 
 	for ( uint8_t i = 0; i < 8; ++i )
 	{
@@ -110,5 +111,5 @@ void sha256( const uint8_t *data, size_t len, uint8_t hash[32] )
 
 	sha256_init( &ctx );
 	sha256_update( &ctx, data, len );
-	sha256_final( &ctx, hash );
+	sha256_final( hash, &ctx );
 }
