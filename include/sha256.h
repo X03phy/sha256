@@ -7,9 +7,6 @@
 /* For size_t, SHA256_DIGEST_LENGTH */
 #include <stddef.h>
 
-/* For strlen(), strcmp() */
-#include <string.h>
-
 #define ROTR( x,n )   ( ( x >> n ) | ( x << ( 32 - n ) ) )
 #define SHR( x,n )    ( x >> n )
 #define CH( x,y,z )   ( ( x & y ) ^ ( ~x & z ) )
