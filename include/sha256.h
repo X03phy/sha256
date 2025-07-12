@@ -1,7 +1,7 @@
 #ifndef SHA256_h
 #define SHA256_h
 
-/* For uintXX_t */
+/* For uintX_t */
 #include <stdint.h>
 
 /* For size_t */
