@@ -4,7 +4,7 @@
 /* For uintX_t */
 #include <stdint.h>
 
-/* For size_t */
+/* For size_t, SHA256_DIGEST_LENGTH */
 #include <stddef.h>
 
 /* For strlen(), strcmp() */

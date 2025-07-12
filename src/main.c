@@ -1,7 +1,6 @@
-/* For sha256() */
 #include "sha256.h"
 
-/* For SHA256() */
+/* For SHA256(), SHA256_DIGEST_LENGTH */
 #include <openssl/sha.h>
 
 /* For printf() */
