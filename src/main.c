@@ -1,6 +1,13 @@
+/* For sha256() */
 #include "sha256.h"
+
+/* For SHA256() */
 #include <openssl/sha.h>
+
+/* For printf() */
 #include <stdio.h>
+
+/* For memcmp() */
 #include <string.h>
 
 int main( int argc, char **argv )
