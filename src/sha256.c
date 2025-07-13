@@ -94,6 +94,7 @@ static void sha256_final( uint8_t hash[32], t_sha256_ctx *ctx )
 	ctx->buffer[ctx->buffer_len++] = ( ctx->bitlen >> 16 ) & 0xff;
 	ctx->buffer[ctx->buffer_len++] = ( ctx->bitlen >> 8 ) & 0xff;
 	ctx->buffer[ctx->buffer_len++] = ctx->bitlen & 0xff;
+
 	sha256_transform( ctx );
 
 	for ( uint8_t i = 0; i < 8; ++i )
