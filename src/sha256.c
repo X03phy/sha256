@@ -98,10 +98,10 @@ static void sha256_final( uint8_t hash[32], t_sha256_ctx *ctx )
 
 	for ( uint8_t i = 0; i < 8; ++i )
 	{
-		hash[ i * 4 ] = ( ctx->state[i] >> 24 ) & 0xff;
-		hash[ i * 4 + 1 ] = ( ctx->state[i] >> 16 ) & 0xff;
-		hash[ i * 4 + 2 ] = ( ctx->state[i] >> 8 ) & 0xff;
-		hash[ i * 4 + 3 ] = ( ctx->state[i] ) & 0xff;
+		hash[i * 4] = ( ctx->state[i] >> 24 ) & 0xff;
+		hash[i * 4 + 1] = ( ctx->state[i] >> 16 ) & 0xff;
+		hash[i * 4 + 2] = ( ctx->state[i] >> 8 ) & 0xff;
+		hash[i * 4 + 3] = ( ctx->state[i] ) & 0xff;
 	}
 }
 
