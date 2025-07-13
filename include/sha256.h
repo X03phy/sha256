@@ -4,7 +4,7 @@
 /* For uintX_t */
 #include <stdint.h>
 
-/* For size_t, SHA256_DIGEST_LENGTH */
+/* For size_t */
 #include <stddef.h>
 
 #define ROTR( x,n )   ( ( x >> n ) | ( x << ( 32 - n ) ) )

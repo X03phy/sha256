@@ -1,6 +1,6 @@
 #include "sha256.h"
 
-/* For SHA256(), SHA256_DIGEST_LENGTH */
+/* For SHA256() */
 #include <openssl/sha.h>
 
 /* For printf() */
@@ -17,22 +17,22 @@ int main( int argc, char **argv )
 		return ( 1 );
 	}
 
-	unsigned char hash[SHA256_DIGEST_LENGTH];
-	unsigned char my_hash[SHA256_DIGEST_LENGTH];
+	unsigned char hash[32];
+	unsigned char my_hash[32];
 
 	SHA256( ( const unsigned char * ) argv[1], strlen( argv[1] ), hash );
 	printf( "openssl SHA256: " );
-	for ( uint8_t i = 0; i < SHA256_DIGEST_LENGTH; ++i )
+	for ( uint8_t i = 0; i < 32; ++i )
 		printf( "%02x", hash[i] );
 	printf( "\n" );
 
 	sha256( ( const unsigned char * ) argv[1], strlen(argv[1]), my_hash );
 	printf( "my SHA256:      " );
-	for ( uint8_t i = 0; i < SHA256_DIGEST_LENGTH; ++i )
+	for ( uint8_t i = 0; i < 32; ++i )
 		printf( "%02x", my_hash[i] );
 	printf("\n");
 
-	if ( !memcmp( ( const char * ) hash, ( const char * ) my_hash, SHA256_DIGEST_LENGTH ) )
+	if ( !memcmp( ( const char * ) hash, ( const char * ) my_hash, 32 ) )
 		printf( "OK\n" );
 	else
 		printf( "KO\n" );
