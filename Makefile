@@ -1,4 +1,4 @@
-NAME=SHA256
+NAME=sha256
 
 CC=gcc
 CFLAGS=-Werror -Wall -Wextra -g -MMD
