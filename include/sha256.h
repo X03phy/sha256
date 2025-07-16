@@ -1,5 +1,5 @@
-#ifndef SHA256_h
-#define SHA256_h
+#ifndef SHA256_H
+#define SHA256_H
 
 /* For uintX_t */
 #include <stdint.h>
